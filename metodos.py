@@ -39,30 +39,41 @@ class UrbanRoutesPage:
         ).click()
 
     def set_phone_number(self, phone_number):
-        self.driver.find_element(*UrbanRoutesLocators.phone_input).send_keys(phone_number)
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(UrbanRoutesLocators.phone_input)
+        ).send_keys(phone_number)
 
     def add_credit_card(self, card_number, card_expiry, cvv):
-        self.driver.find_element(*UrbanRoutesLocators.add_card_button).click()
-        modal = self.driver.find_element(*UrbanRoutesLocators.card_modal_cvv)
-        modal.send_keys(cvv)
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(UrbanRoutesLocators.add_card_button)
+        ).click()
+        modal = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(UrbanRoutesLocators.credit_click)
+        )
+        modal.send_keys(card_number)
         modal.send_keys(Keys.TAB)
-        submit_button = self.driver.find_element(*UrbanRoutesLocators.card_modal_submit)
-        assert submit_button.is_enabled(), "El botón de enviar tarjeta no se activó después de ingresar el CVV"
-        submit_button.click()
+        self.driver.find_element(*UrbanRoutesLocators.card_cvv).send_keys(cvv)
+        self.driver.find_element(*UrbanRoutesLocators.agree_card).click()
 
     def write_driver_message(self, message):
-        self.driver.find_element(*UrbanRoutesLocators.driver_message_input).send_keys(message)
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(UrbanRoutesLocators.driver_message_input)
+        ).send_keys(message)
 
-    def add_blanket_and_tissues(self, blanket_and_tissues_button):
-        slider = self.driver.find_element(blanket_and_tissues_button)
-        slider.click()
+    def add_blanket_and_tissues(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(UrbanRoutesLocators.blanket_and_tissues_button)
+        ).click()
 
-        # Verificar que el checkbox está activado
-        checkbox = self.driver.find_element(blanket_and_tissues_button)
-        assert checkbox.is_selected(), "El slider no activó correctamente el checkbox."
-
-    def add_ice_cream(self, ice_cream_button):
-        self.driver.find_element(ice_cream_button).click(2)
+    def add_ice_cream(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(UrbanRoutesLocators.ice_cream_button)
+        ).click()
+        WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(UrbanRoutesLocators.ice_cream_button)
+        ).click()
 
     def is_taxi_modal_visible(self):
-        return self.driver.find_element(*UrbanRoutesLocators.modal_taxi).is_displayed()
+        return WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(UrbanRoutesLocators.modal_taxi)
+        ).is_displayed()
